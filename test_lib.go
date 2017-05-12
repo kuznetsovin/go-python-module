@@ -7,8 +7,6 @@ package main
 	#include <Python/Python.h>
 #endif
 
-#include <string.h>
-
 PyObject *test_lib_error;
 PyObject * Concat(PyObject *, PyObject *);
 

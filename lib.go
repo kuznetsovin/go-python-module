@@ -11,6 +11,7 @@ int Parse_Args(PyObject * args, char * str, int * index);
 */
 import "C"
 import (
+	"errors"
 	"log"
 	"strconv"
 	"time"
@@ -27,11 +28,10 @@ func Concat(self *C.PyObject, args *C.PyObject) *C.PyObject {
 	}
 
 	result := ""
-	idx := int(c_idx)
-	if idx != 0 {
-		result = C.GoString(string) + strconv.Itoa(idx)
-	} else {
-		setException("Индекс не может быть 0")
+	var err error = nil
+
+	if result, err = sum(C.GoString(string), int(c_idx)); err != nil {
+		setException(err.Error())
 	}
 
 	go func() {
@@ -41,4 +41,17 @@ func Concat(self *C.PyObject, args *C.PyObject) *C.PyObject {
 	}()
 
 	return C.PyString_FromString(C.CString(result))
+}
+
+func sum(s string, i int) (string, error) {
+	result := ""
+	var err error = nil
+
+	if i != 0 {
+		result = s + strconv.Itoa(i)
+	} else {
+		err = errors.New("Индекс не может быть 0")
+	}
+
+	return result, err
 }
